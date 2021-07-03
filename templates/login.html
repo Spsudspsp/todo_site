@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="shortcut icon" type="image/jpg" href="/Untitled.jpg"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <title>ToDo</title>
+    </head>
+
+    <body style="background-color:rgb(138, 138, 138)">
+        <div>
+            <div class='container p-3 my-3 bg-dark text-white rounded'>         
+                <div class="form">
+                    <form method='POST'>
+                        <div class='text-center'>
+                            <h1>Login</h1>
+
+                            <div style="vertical-align: middle; padding-top: 1%;"> 
+                                <label for="firstName">Username:</label>
+                                <input type='text' name='username' maxlength="15" required="" id="id_username" />
+                            </div>
+                            
+    
+                            <div style="vertical-align: middle; padding-top: 1%">
+                                <label for='password'>Password:</label>
+                                <input type='password' name='password' maxlength='150' required='' id='id_password' />  
+                            </div>
+                            
+                            <button type="button" class="my-3 btn btn-success">Submit</button>
+
+                            <br>
+
+                            <div>
+                                <h1>No Account?</h1>
+                                <a href="{% url 'registration page' %}">
+                                    <button type='button' class='my-3 btn button-primary bg-white'>Register</button>
+                                </a>
+                            </div>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+
+            <div class="container">
+                <img class="rounded" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.RDc2ptk1sER-ca-80JHu9gHaEK%26pid%3DApi%26h%3D160&f=1" style="display:block; margin-left:auto; margin-right:auto; width:50%">
+            </div>
+
+        </div>
+    </body>
+</html>
