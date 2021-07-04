@@ -1,6 +1,20 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
 
 # Create your views here.
+from myapp.models import Todo
+
+
+def complete(request, pk):
+    return redirect('home page')
+
+
+def change_password(request):
+    return render(request, 'change_password.html')
+
+
+def change_username(request):
+    return render(request, 'change_username.html')
 
 
 def index(request):
@@ -16,7 +30,11 @@ def profile_page(request):
 
 
 def todo_details(request, pk):
-    return render(request, 'todo-details.html')
+    todo = Todo.objects.get(pk=pk)
+    context = {
+        'todo': todo
+    }
+    return render(request, 'todo-details.html', context)
 
 
 def create_todo(request):
@@ -32,7 +50,10 @@ def delete_todo(request, pk):
 
 
 def homepage(request):
-    return render(request, 'home-with-profile.html')
+    context = {
+        'todos': Todo.objects.all()
+    }
+    return render(request, 'home-with-profile.html', context)
 
 
 

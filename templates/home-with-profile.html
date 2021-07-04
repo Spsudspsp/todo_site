@@ -1,55 +1,34 @@
-<html lang="en">
-
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <title>ToDo</title>
-    </head>
-
-    <body style="background-color: rgb(138, 138, 138);">
-        <!--navbar-->
-        <header>
-            <div class='container-fluid'>
-                <nav class='row bg-dark'>
-                    <ul>
-                        <li style="float: right; margin-left: 15px; margin-top: 10px;">
-                            <a class='btn button-primary bg-white' href="/profile">Profile</a>
-                        </li>
-                        <li style="float: right; margin-left: 15px; margin-top: 10px;">
-                            <a class='btn button-primary bg-white' href="/add">Add Todo</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div> 
-        </header>
-
-        <!--endofnavbar-->    
-
-        <h1 style="text-align: center; user-select: none;">My Todos</h1>
-
-        <!--todos-->
-
-        <div class="container-sm bg-dark text-white rounded p3 my-3">
-            <h2 style="user-select: none;">Today's Tasks</h2>
-
-            <div class="right">
-                <a class="btn button-primary bg-white p1 my-2" href="/details/3">Details</a>
-                <a class="btn button-primary bg-white p1 my-2" href="/edit/3">Edit</a>
-                <a class="btn button-primary bg-white p1 my-2" href="/delete/3">Complete</a>
-                <a class="btn button-primary bg-white p1 my-2" href="/delete/3">Delete</a>
-            </div>
+{% extends 'base.html' %}
+{% block content %}
+    <header>
+        <div class='container-fluid'>
+            <nav class='row bg-dark'>
+                <ul>
+                    <li style="float: right; margin-left: 15px; margin-top: 10px;">
+                        <a class='btn button-primary bg-white' href="{% url 'profile page' %}">Profile</a>
+                    </li>
+                    <li style="float: right; margin-left: 15px; margin-top: 10px;">
+                        <a class='btn button-primary bg-white' href="{% url 'create todo' %}">Add Todo</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
+    </header>
 
-        <div class="container-sm bg-dark text-white p3 my-3">
-            <h2>Python Web Basics</h2>
-            <div class="right">
-                <a class="btn button-primary bg-white p1 my-2" href="/details/4">Details</a>
-                <a class="btn button-primary bg-white p1 my-2" href="/edit/4">Edit</a>
-                <a class="btn button-primary bg-white p1 my-2" href="/delete/3">Complete</a>
-                <a class="btn button-primary bg-white p1 my-2" href="/delete/4">Delete</a>
+    <h1 style="text-align: center; user-select: none;">My Todos</h1>
+    {% if todos %}
+        {% for todo in todos %}
+            <div class="container-sm bg-dark text-white rounded p3 my-3">
+                <h2 style="user-select: none;">{{ todo.title }}</h2>
+                <div class="right">
+                    <a class="btn button-primary bg-white p1 my-2" href="{% url 'todo details' todo.id %}">Details</a>
+                    <a class="btn button-primary bg-white p1 my-2" href="{% url 'edit todo' todo.id %}">Edit</a>
+                    <a class="btn button-primary bg-white p1 my-2" href="{% url 'complete todo' todo.id %}">Complete</a>
+                    <a class="btn button-primary bg-white p1 my-2" href="{% url 'delete todo' todo.id %}">Delete</a>
+                </div>
             </div>
-        </div>
-    
-    </body>
-</html>
+        {% endfor %}
+    {% else %}
+        <h2 style="text-align: center; user-select: none;">No Todos to show.</h2>
+    {% endif %}
+{% endblock %}

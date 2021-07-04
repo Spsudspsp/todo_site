@@ -1,37 +1,25 @@
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="shortcut icon" type="image/jpg" href="/Untitled.jpg"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <title>ToDo</title>
-    </head>
-
-    <body style="background-color:rgb(138, 138, 138)">
-        <div>
-            <div class='container p-3 my-3 bg-dark text-white rounded'>         
-                <div class="form">
-                    <form method='POST'>
-                        <div class='text-center'>
-                            <h1>Create ToDo</h1>
-
-                            <div style="vertical-align: middle; padding-top: 1%;"> 
-                                <label for="firstName">Title:</label>
-                                <input type='text' name='title' maxlength="15" required="" id="id_title" />
-                            </div>
-                            
-    
-                            <div style="vertical-align: middle; padding-top: 1%">
-                                <label for='content'>Content:</label>
-                                <input type='text' name='content' maxlength='500' required='' id='id_content' />  
-                            </div>
-                            
-                            <button type="button" class="my-3 btn btn-success">Submit</button>
+{% extends 'base.html' %}
+{% block content %}
+    <div>
+        <div class='container p-3 my-3 bg-dark text-white rounded'>
+            <div class="form">
+                <form method='POST'>
+                    <div class='text-center'>
+                        <h1>ToDo</h1>
+                        <div style="vertical-align: middle; padding-top: 1%;">
+                            <label for="firstName">Title:</label>
+                            <input type='text' name='title' maxlength="15" required="" id="id_title" />
                         </div>
-                        
-                    </form>
-                </div>
+
+                        <div style="vertical-align: middle; padding-top: 1%">
+                            <label for='content'>Content:</label>
+                            <input type='text' name='content' maxlength='500' required='' id='id_content' />
+                        </div>
+
+                        <button type="button" class="my-3 btn btn-success">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </body>
-</html>
+    </div>
+{% endblock %}

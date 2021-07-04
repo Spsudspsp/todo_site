@@ -1,33 +1,23 @@
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        
-        <title>ToDo</title>
-    </head>
+{% extends 'base.html' %}
+{% block content %}
 
-    <body style="background-color: rgb(138, 138, 138);">
-        <!--navigation bar-->
-        <header>
-            <nav class='row bg-dark'>
-                <ul>
-                    <li style="text-align: center; margin-left: 15px; margin-top: 10px;">
-                        <a class='btn button-primary bg-white my-3 p3' href="/add">Todos</a>
-                        <a class='btn button-primary bg-white my-3 p3' href="/add">Profile</a>
-                    </li>
-                </ul>
-            </nav>
-        </header>
-        <!--end navigation bar-->
-            <!--end profile details container-->
-            <div class="card container bg-dark text-white p3 my-3" style="align-items: left;">
-                <h1 style="padding-bottom: 3%; padding-left: 1%; padding-top: 3%;">Title: title</h1>
-                <p>CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENTCONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENTCONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENTCONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT</p>
-                <button class="btn button-primary bg-white p2 my-2">Edit</button>
-                <a class="btn button-primary bg-white p1 my-2" href="/delete/3">Complete</a>
-                <button class="btn button-primary bg-white p2 my-2">Delete</button>
-              </div>
-        </div>
-    </body>
-</html>
+    <header>
+        <nav class='row bg-dark'>
+            <ul>
+                <li style="text-align: center; margin-left: 15px; margin-top: 10px;">
+                    <a class='btn button-primary bg-white my-3 p3' href="{% url 'home page' %}">Todos</a>
+                    <a class='btn button-primary bg-white my-3 p3' href="{% url 'profile page' %}">Profile</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="card container bg-dark text-white p3 my-3" style="align-items: left;">
+        <h1 style="padding-bottom: 3%; padding-left: 1%; padding-top: 3%;">Title: {{ todo.title }}</h1>
+        <p>{{ todo.content }}</p>
+        <a class="btn button-primary bg-white p1 my-2" href="{% url 'edit todo' todo.id %}">Edit</a>
+        <a class="btn button-primary bg-white p1 my-2" href="{% url 'complete todo' todo.id %}">Complete</a>
+        <a class="btn button-primary bg-white p1 my-2" href="{% url 'delete todo' todo.id %}">Delete</a>
+    </div>
+
+{% endblock %}
