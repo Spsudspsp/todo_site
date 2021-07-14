@@ -4,19 +4,16 @@
         <div class='container p-3 my-3 bg-dark text-white rounded'>
             <div class="form">
                 <form method='POST'>
+                    {% csrf_token %}
                     <div class='text-center'>
                         <h1>ToDo</h1>
                         <div style="vertical-align: middle; padding-top: 1%;">
-                            <label for="firstName">Title:</label>
-                            <input type='text' name='title' maxlength="15" required="" id="id_title" />
+                            {{ form.title }}
                         </div>
-
-                        <div style="vertical-align: middle; padding-top: 1%">
-                            <label for='content'>Content:</label>
-                            <input type='text' name='content' maxlength='500' required='' id='id_content' />
+                        <div style="vertical-align: middle; padding-top: 1%;">
+                            {{ form.content }}
                         </div>
-
-                        <button type="button" class="my-3 btn btn-success">Submit</button>
+                        <button type="submit" class="my-3 btn btn-success">Submit</button>
                     </div>
                 </form>
             </div>

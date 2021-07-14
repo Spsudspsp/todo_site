@@ -13,11 +13,22 @@
     </header>
 
     <div class="card container bg-dark text-white p3 my-3" style="align-items: left;">
-        <h1 style="padding-bottom: 3%; padding-left: 1%; padding-top: 3%;">Title: {{ todo.title }}</h1>
-        <p>{{ todo.content }}</p>
+        <h1 style="padding-bottom: 1%; padding-left: 1%; padding-top: 3%;">Title: {{ todo.title }}</h1>
+        <div class="container" style="float: right">
+            {% if todo.completed %}
+                <p class="text-info">Completed!</p>
+            {% else %}
+                <p class="text-warning">Not completed!</p>
+            {% endif %}
+        </div>
+        <p style="padding-left: 1%">Content: {{ todo.content }}</p>
         <a class="btn button-primary bg-white p1 my-2" href="{% url 'edit todo' todo.id %}">Edit</a>
-        <a class="btn button-primary bg-white p1 my-2" href="{% url 'complete todo' todo.id %}">Complete</a>
-        <a class="btn button-primary bg-white p1 my-2" href="{% url 'delete todo' todo.id %}">Delete</a>
+        {% if not todo.completed %}
+            <a class="btn button-primary bg-white p1 my-2" href="{% url 'complete todo' todo.id %}">Complete</a>
+        {% else %}
+            <a class="btn button-primary bg-white p1 my-2" href="{% url 'undo complete todo' todo.id %}">Reset completion</a>
+        {% endif %}
+            <a class="btn button-primary bg-white p1 my-2" href="{% url 'delete todo' todo.id %}">Delete</a>
     </div>
 
 {% endblock %}

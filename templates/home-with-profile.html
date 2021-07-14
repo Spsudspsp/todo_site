@@ -19,11 +19,23 @@
     {% if todos %}
         {% for todo in todos %}
             <div class="container-sm bg-dark text-white rounded p3 my-3">
+            <div>
                 <h2 style="user-select: none;">{{ todo.title }}</h2>
+                {% if todo.completed %}
+                    <p style="float: right" class="text-info">Completed!</p>
+                {% else %}
+                    <p style="float: right" class="text-warning">Not completed!</p>
+                {% endif %}
+            </div>
+
                 <div class="right">
                     <a class="btn button-primary bg-white p1 my-2" href="{% url 'todo details' todo.id %}">Details</a>
                     <a class="btn button-primary bg-white p1 my-2" href="{% url 'edit todo' todo.id %}">Edit</a>
-                    <a class="btn button-primary bg-white p1 my-2" href="{% url 'complete todo' todo.id %}">Complete</a>
+                    {% if not todo.completed %}
+                        <a class="btn button-primary bg-white p1 my-2" href="{% url 'complete todo' todo.id %}">Complete</a>
+                    {% else %}
+                        <a class="btn button-primary bg-white p1 my-2" href="{% url 'undo complete todo' todo.id %}">Reset completion</a>
+                    {% endif %}
                     <a class="btn button-primary bg-white p1 my-2" href="{% url 'delete todo' todo.id %}">Delete</a>
                 </div>
             </div>
