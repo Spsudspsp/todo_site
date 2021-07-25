@@ -1,10 +1,21 @@
+import os
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views import View
 
 
 # Create your views here.
-from myapp.forms import TodoForm
-from myapp.models import Todo
+from myapp.forms import TodoForm, RegistrationForm, ProfileImageForm
+from myapp.models import Todo, Profile
+
+
+class LogoutView(View):
+
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('index')
 
 
 class CompleteView(View):
@@ -40,19 +51,48 @@ class ChangeUsernameView(View):
 class IndexView(View):
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'login.html')
+        context = {
+            'form': RegistrationForm(),
+        }
+        return render(request, 'login.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user:
+                login(request, user)
+                return redirect('home page')
+            return redirect('/')
 
 
 class RegisterView(View):
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'registration.html')
+        context = {
+            'form': RegistrationForm(),
+        }
+        return render(request, 'registration.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            User.objects.create_user(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password']
+            )
+            return redirect('index')
 
 
 class ProfilePageView(View):
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'profile.html')
+        context = {
+            'profile': request.user.user_profile,
+        }
+        return render(request, 'profile.html', context)
 
 
 class TodoDetailsView(View):
@@ -83,7 +123,9 @@ class CreateTodoView(View):
     def post(self, request, *args, **kwargs):
         form = TodoForm(request.POST)
         if form.is_valid():
-            form.save()
+            a = form.save(commit=False)
+            a.user = request.user
+            a.save()
             return redirect('home page')
 
 
@@ -138,6 +180,25 @@ class HomePageView(View):
 
     def get(self, request, *args, **kwargs):
         context = {
-            'todos': Todo.objects.all()
+            'todos': Todo.objects.filter(user=request.user)
         }
         return render(request, 'home-with-profile.html', context)
+
+
+class SetProfileImageView(View):
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'form': ProfileImageForm()
+        }
+        return render(request, 'profile-image-upload.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = ProfileImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = request.user.user_profile
+            if user.profile_image:
+                os.remove('media/images/' + user.profile_image.name.split('/')[-1])
+            user.profile_image = form.cleaned_data['image']
+            user.save()
+            return redirect('home page')

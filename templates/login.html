@@ -4,25 +4,20 @@
         <div class='container p-3 my-3 bg-dark text-white rounded'>
             <div class="form">
                 <form method='POST'>
+                    {% csrf_token %}
                     <div class='text-center'>
                         <h1>Login</h1>
                         <div style="vertical-align: middle; padding-top: 1%;">
-                            <label for="firstName">Username:</label>
-                            <input type='text' name='username' maxlength="15" required="" id="id_username" />
+                            {{ form.username }}
                         </div>
-
-                        <div style="vertical-align: middle; padding-top: 1%">
-                            <label for='password'>Password:</label>
-                            <input type='password' name='password' maxlength='150' required='' id='id_password' />
+                        <div style="vertical-align: middle; padding-top: 1%;">
+                            {{ form.password }}
                         </div>
-
-                        <button type="button" class="my-3 btn btn-success">Submit</button>
+                        <button type="submit" class="my-3 btn btn-success">Submit</button>
                         <br>
                         <div>
                             <h1>No Account?</h1>
-                            <a href="{% url 'registration page' %}">
-                                <button type='button' class='my-3 btn button-primary bg-white'>Register</button>
-                            </a>
+                            <a class='my-3 btn button-primary bg-white' href="{% url 'registration page' %}">Register</a>
                         </div>
                     </div>
 
