@@ -16,8 +16,8 @@
             <img class="p5 my-5" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fclipartart.com%2Fimages%2Fdefault-profile-picture-clipart-3.jpg&f=1&nofb=1" style="width:100%; height: 350px; width: 350px; border-radius: 58%;">
         {% endif %}
        <h1 style="padding-bottom: 3%;">{{ request.user.username }}</h1>
-       <p style="padding-bottom: 1%;"><button class="btn button-primary bg-white">Change username</button></p>
-       <p style="padding-bottom: 1%;"><button class="btn button-primary bg-white">Change password</button></p>
+       <p style="padding-bottom: 1%;"><a class="btn button-primary bg-white" href="{% url 'change username' %}">Change username</a></p>
+       <p style="padding-bottom: 1%;"><a class="btn button-primary bg-white" href="{% url 'change password' %}">Change password</a></p>
        <p style="padding-bottom: 1%;"><a class='btn button-primary bg-white' href="{% url 'set pfp' %}">Set profile image</a></p>
         <p style="padding-bottom: 1%;">
             <form action="{% url 'logout' %}" method="POST">
@@ -25,6 +25,11 @@
                 <button type='submit' class="btn button-primary bg-white">Logout</button>
             </form>
         </p>
-       <p style="padding-bottom: 1%;"><button class="btn button-primary bg-white">Delete</button></p>
+        <p style="padding-bottom: 1%;">
+            <form action="{% url 'delete profile' %}" method="POST">
+                {% csrf_token %}
+                <button type='submit' class="btn button-primary bg-white">Delete</button>
+            </form>
+        </p>
     </div>
 {% endblock %}

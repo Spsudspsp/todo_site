@@ -1,14 +1,26 @@
 import os
 
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views import View
 
 
 # Create your views here.
-from myapp.forms import TodoForm, RegistrationForm, ProfileImageForm
+from myapp.forms import TodoForm, RegistrationForm, ProfileImageForm, ChangeUsernameForm
 from myapp.models import Todo, Profile
+
+
+class DeleteProfileView(View):
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        if user.user_profile.profile_image:
+            os.remove('media/images/' + user.user_profile.profile_image.name.split('/')[-1])
+        user.delete()
+        return redirect('index')
 
 
 class LogoutView(View):
@@ -21,43 +33,81 @@ class LogoutView(View):
 class CompleteView(View):
 
     def get(self, request, pk, *args, **kwargs):
-        todo = Todo.objects.get(pk=pk)
-        todo.completed = True
-        todo.save()
-        return redirect('home page')
+        try:
+            todo = Todo.objects.get(pk=pk)
+            todo.completed = True
+            todo.save()
+            return redirect('home page')
+        except Todo.DoesNotExist:
+            raise Http404
 
 
 class UndoCompleteView(View):
 
     def get(self, request, pk, *args, **kwargs):
-        todo = Todo.objects.get(pk=pk)
-        todo.completed = False
-        todo.save()
-        return redirect('home page')
+        try:
+            todo = Todo.objects.get(pk=pk)
+            todo.completed = False
+            todo.save()
+            return redirect('home page')
+        except Todo.DoesNotExist:
+            raise Http404
 
 
 class ChangePasswordView(View):
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'change_password.html')
-
-
-class ChangeUsernameView(View):
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'change_username.html')
-
-
-class IndexView(View):
+    form_class = PasswordChangeForm
 
     def get(self, request, *args, **kwargs):
         context = {
-            'form': RegistrationForm(),
+            'form': self.form_class(user=request.user)
+        }
+        return render(request, 'change_password.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST, user=request.user)
+        if not form.is_valid():
+            print(form.errors)
+            print(request.POST)
+            context = {
+                'form': form,
+            }
+            return render(request, 'change_password.html', context)
+        form.save()
+        update_session_auth_hash(request, form.user)
+        return redirect('profile page')
+
+
+class ChangeUsernameView(View):
+    form_class = ChangeUsernameForm
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'form': self.form_class()
+        }
+        return render(request, 'change_username.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = request.user
+            user.username = form.cleaned_data['new_username']
+            user.save()
+            auth_user = authenticate(username=user.username, password=user.password)
+            login(request, auth_user)
+            return redirect('profile page')
+
+
+class IndexView(View):
+    form_class = RegistrationForm
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'form': self.form_class(),
         }
         return render(request, 'login.html', context)
 
     def post(self, request, *args, **kwargs):
-        form = RegistrationForm(request.POST)
+        form = self.form_class(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -69,21 +119,27 @@ class IndexView(View):
 
 
 class RegisterView(View):
+    form_class = RegistrationForm
 
     def get(self, request, *args, **kwargs):
         context = {
-            'form': RegistrationForm(),
+            'form': self.form_class(),
         }
         return render(request, 'registration.html', context)
 
     def post(self, request, *args, **kwargs):
-        form = RegistrationForm(request.POST)
+        form = self.form_class(request.POST)
         if form.is_valid():
-            User.objects.create_user(
+            user = User.objects.create_user(
                 username=form.cleaned_data['username'],
                 password=form.cleaned_data['password']
             )
-            return redirect('index')
+
+            auth_user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            if auth_user:
+                login(request, user)
+                return redirect('home page')
+        return redirect('index')
 
 
 class ProfilePageView(View):
@@ -102,7 +158,10 @@ class TodoDetailsView(View):
         self.todo = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.todo = Todo.objects.get(pk=kwargs['pk'])
+        try:
+            self.todo = Todo.objects.get(pk=kwargs['pk'])
+        except Todo.DoesNotExist:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -113,15 +172,16 @@ class TodoDetailsView(View):
 
 
 class CreateTodoView(View):
+    form_class = TodoForm
 
     def get(self, request, *args, **kwargs):
         context = {
-            'form': TodoForm()
+            'form': self.form_class()
         }
         return render(request, 'create-todo.html', context)
 
     def post(self, request, *args, **kwargs):
-        form = TodoForm(request.POST)
+        form = self.form_class(request.POST)
         if form.is_valid():
             a = form.save(commit=False)
             a.user = request.user
@@ -130,40 +190,49 @@ class CreateTodoView(View):
 
 
 class EditTodoView(View):
+    form_class = TodoForm
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.todo = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.todo = Todo.objects.get(pk=kwargs['pk'])
+        try:
+            self.todo = Todo.objects.get(pk=kwargs['pk'])
+        except Todo.DoesNotExist:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        form = TodoForm(instance=self.todo)
+        form = self.form_class(instance=self.todo)
         context = {
             'form': form
         }
         return render(request, 'create-todo.html', context)
 
     def post(self, request, *args, **kwargs):
-        form = TodoForm(request.POST, instance=self.todo)
+        form = self.form_class(request.POST, instance=self.todo)
         if form.is_valid():
             form.save()
             return redirect('home page')
 
 
 class DeleteTodoView(View):
+    form_class = TodoForm
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.todo = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.todo = Todo.objects.get(pk=kwargs['pk'])
+        try:
+            self.todo = Todo.objects.get(pk=kwargs['pk'])
+        except Todo.DoesNotExist:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        form = TodoForm(instance=self.todo)
+        form = self.form_class(instance=self.todo)
         for field in form.fields:
             form.fields[field].disabled = True
         context = {
@@ -186,15 +255,16 @@ class HomePageView(View):
 
 
 class SetProfileImageView(View):
+    form_class = ProfileImageForm
 
     def get(self, request, *args, **kwargs):
         context = {
-            'form': ProfileImageForm()
+            'form': self.form_class()
         }
         return render(request, 'profile-image-upload.html', context)
 
     def post(self, request, *args, **kwargs):
-        form = ProfileImageForm(request.POST, request.FILES)
+        form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
             user = request.user.user_profile
             if user.profile_image:

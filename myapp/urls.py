@@ -4,7 +4,7 @@ from django.urls import path
 
 from django.conf import settings
 from myapp import views
-from myapp.views import SetProfileImageView, LogoutView
+from myapp.views import SetProfileImageView, LogoutView, DeleteProfileView
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
@@ -20,5 +20,6 @@ urlpatterns = [
     path('complete/<int:pk>', login_required(views.CompleteView.as_view()), name='complete todo'),
     path('undo-complete/<int:pk>', login_required(views.UndoCompleteView.as_view()), name='undo complete todo'),
     path('set-profile-image', login_required(SetProfileImageView.as_view()), name='set pfp'),
-    path('logout', login_required(LogoutView.as_view()), name='logout')
+    path('logout', login_required(LogoutView.as_view()), name='logout'),
+    path('delete-profile', login_required(DeleteProfileView.as_view()), name='delete profile')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
