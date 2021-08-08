@@ -72,6 +72,5 @@ class TestForms(TestCase):
 
     def test_image_upload_form_valid_data(self):
         form = f.ProfileImageForm({}, {'image': SimpleUploadedFile(name='test_image.jpg', content=open('myapp/tests/media/images/test_image.jpg', 'rb').read(), content_type='image/jpeg')})
-        print(form.errors)
 
         self.assertTrue(form.is_valid())

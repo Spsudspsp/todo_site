@@ -31,27 +31,39 @@ class LogoutView(View):
 
 
 class CompleteView(View):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.todo = None
 
-    def get(self, request, pk, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         try:
-            todo = Todo.objects.get(pk=pk)
-            todo.completed = True
-            todo.save()
-            return redirect('home page')
+            self.todo = Todo.objects.get(pk=kwargs['pk'])
         except Todo.DoesNotExist:
             raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        self.todo.completed = True
+        self.todo.save()
+        return redirect('home page')
 
 
 class UndoCompleteView(View):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.todo = None
 
-    def get(self, request, pk, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         try:
-            todo = Todo.objects.get(pk=pk)
-            todo.completed = False
-            todo.save()
-            return redirect('home page')
+            self.todo = Todo.objects.get(pk=kwargs['pk'])
         except Todo.DoesNotExist:
             raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        self.todo.completed = False
+        self.todo.save()
+        return redirect('home page')
 
 
 class ChangePasswordView(View):
@@ -66,8 +78,6 @@ class ChangePasswordView(View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(data=request.POST, user=request.user)
         if not form.is_valid():
-            print(form.errors)
-            print(request.POST)
             context = {
                 'form': form,
             }
@@ -95,6 +105,7 @@ class ChangeUsernameView(View):
             auth_user = authenticate(username=user.username, password=user.password)
             login(request, auth_user)
             return redirect('profile page')
+        return redirect('change username')
 
 
 class IndexView(View):
@@ -135,10 +146,8 @@ class RegisterView(View):
                 password=form.cleaned_data['password']
             )
 
-            auth_user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
-            if auth_user:
-                login(request, user)
-                return redirect('home page')
+            login(request, user)
+            return redirect('home page')
         return redirect('index')
 
 
