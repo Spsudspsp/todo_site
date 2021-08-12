@@ -1,12 +1,7 @@
-from io import StringIO
-
-from PIL import Image
 from django.contrib.auth.models import User
-from unittest import TestCase
+from django.test import TestCase
 
-from django.core.files import File
 
-from TodoProject import settings
 from myapp import forms as f
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -55,6 +50,22 @@ class TestForms(TestCase):
 
         self.assertFalse(form.is_valid())
 
+    def test_registration_form_invalid_data_username_too_long(self):
+        form = f.RegistrationForm(data={
+            'username': 'asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd',
+            'password': 'asdasdasd1'
+        })
+
+        self.assertFalse(form.is_valid())
+
+    def test_registration_form_invalid_data_password_too_long(self):
+        form = f.RegistrationForm(data={
+            'username': 'asdasdasd',
+            'password': 'asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd1'
+        })
+
+        self.assertFalse(form.is_valid())
+
     def test_profile_image_form_invalid_data(self):
         form = f.ProfileImageForm(data={})
 
@@ -67,6 +78,11 @@ class TestForms(TestCase):
 
     def test_change_username_form_invalid_data(self):
         form = f.ChangeUsernameForm()
+
+        self.assertFalse(form.is_valid())
+
+    def test_change_username_form_invalid_data_username_too_long(self):
+        form = f.ChangeUsernameForm(data={'new_username': 'asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd'})
 
         self.assertFalse(form.is_valid())
 

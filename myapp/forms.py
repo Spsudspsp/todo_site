@@ -35,4 +35,4 @@ class ProfileImageForm(forms.Form):
 
 
 class ChangeUsernameForm(forms.Form):
-    new_username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'New username'}), max_length=30)
+    new_username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'New username'}), max_length=30, min_length=5)

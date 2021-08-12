@@ -78,10 +78,7 @@ class ChangePasswordView(View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(data=request.POST, user=request.user)
         if not form.is_valid():
-            context = {
-                'form': form,
-            }
-            return render(request, 'change_password.html', context)
+            return redirect('change password')
         form.save()
         update_session_auth_hash(request, form.user)
         return redirect('profile page')
@@ -126,7 +123,7 @@ class IndexView(View):
             if user:
                 login(request, user)
                 return redirect('home page')
-            return redirect('/')
+        return redirect('index')
 
 
 class RegisterView(View):
@@ -148,7 +145,7 @@ class RegisterView(View):
 
             login(request, user)
             return redirect('home page')
-        return redirect('index')
+        return redirect('registration page')
 
 
 class ProfilePageView(View):
@@ -196,6 +193,7 @@ class CreateTodoView(View):
             a.user = request.user
             a.save()
             return redirect('home page')
+        return redirect('create todo')
 
 
 class EditTodoView(View):
@@ -224,6 +222,7 @@ class EditTodoView(View):
         if form.is_valid():
             form.save()
             return redirect('home page')
+        return redirect('home page')
 
 
 class DeleteTodoView(View):
@@ -281,3 +280,4 @@ class SetProfileImageView(View):
             user.profile_image = form.cleaned_data['image']
             user.save()
             return redirect('home page')
+        return redirect('set pfp')

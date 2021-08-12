@@ -1,4 +1,4 @@
-from unittest import TestCase
+from django.test import TestCase
 
 from django.contrib.auth.models import User
 
@@ -25,6 +25,16 @@ class TestModels(TestCase):
         self.todo.completed = False
         self.assertFalse(self.todo.completed)
 
+    def test_create_profile(self):
+        self.assertTrue(self.user.user_profile)
+        self.assertFalse(self.user.user_profile.profile_image)
+
     def tearDown(self):
-        self.user.delete()
-        self.todo.delete()
+        try:
+            self.user.delete()
+        except self.user.DoesNotExist:
+            pass
+        try:
+            self.todo.delete()
+        except self.todo.DoesNotExist:
+            pass
