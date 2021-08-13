@@ -6,7 +6,7 @@ This document aims to describe the features of this web project.
 
 ## Requirements
 This project requires Python >= 3.8 to work.<br>
-You need to install the dependencies from ```requirements.txt``` and configure ```.env``` file
+You need to install the dependencies from ```requirements.txt```
 <br><br>
 
 ## Features
