@@ -54,7 +54,8 @@ class TestViews(TestCase):
     def test_register_page_POST_valid_credentials(self):
         response = self.client.post(reverse('registration page'), {
             'username': 'registerpagetestuser',
-            'password': 'registerpagetestuserpass'
+            'password1': 'dsv5b335sdf34',
+            'password2': 'dsv5b335sdf34'
         })
         user = User.objects.get(username='registerpagetestuser')
 
@@ -67,7 +68,8 @@ class TestViews(TestCase):
     def test_register_page_POST_invalid_credentials(self):
         response = self.client.post(reverse('registration page'), {
             'username': '',
-            'password': ''
+            'password1': '',
+            'password2': ''
         })
 
         self.assertEquals(response.status_code, 302)
@@ -76,7 +78,18 @@ class TestViews(TestCase):
     def test_register_page_POST_invalid_credentials_numeric_password(self):
         response = self.client.post(reverse('registration page'), {
             'username': 'registerpagetestuser',
-            'password': '123123123'
+            'password1': '123123123',
+            'password2': '123123123'
+        })
+
+        self.assertEquals(response.status_code, 302)
+        self.assertRedirects(response, reverse('registration page'))
+
+    def test_register_page_POST_invalid_credentials_unmatching_passwords(self):
+        response = self.client.post(reverse('registration page'), {
+            'username': 'registerpagetestuser',
+            'password1': 'asdasdasdasd',
+            'password2': 'qweqweqweqweqweqqwe'
         })
 
         self.assertEquals(response.status_code, 302)
@@ -145,6 +158,15 @@ class TestViews(TestCase):
         self.client.login(username='viewtestuser', password='viewtestuserpassword')
 
         response = self.client.post(reverse('create todo'), {})
+
+        self.assertFalse(Todo.objects.all())
+        self.assertEquals(response.status_code, 302)
+        self.assertRedirects(response, reverse('create todo'))
+
+    def test_create_todo_page_POST_invalid_data_title_with_special_chars(self):
+        self.client.login(username='viewtestuser', password='viewtestuserpassword')
+
+        response = self.client.post(reverse('create todo'), {'title': 'asd$##$', 'content': 'sdfsdfsdf'})
 
         self.assertFalse(Todo.objects.all())
         self.assertEquals(response.status_code, 302)

@@ -1,7 +1,7 @@
 import os
 
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import render, redirect
@@ -9,7 +9,7 @@ from django.views import View
 
 
 # Create your views here.
-from myapp.forms import TodoForm, RegistrationForm, ProfileImageForm, ChangeUsernameForm
+from myapp.forms import TodoForm, ProfileImageForm, ChangeUsernameForm, LoginForm
 from myapp.models import Todo, Profile
 
 
@@ -106,7 +106,7 @@ class ChangeUsernameView(View):
 
 
 class IndexView(View):
-    form_class = RegistrationForm
+    form_class = LoginForm
 
     def get(self, request, *args, **kwargs):
         context = {
@@ -127,7 +127,7 @@ class IndexView(View):
 
 
 class RegisterView(View):
-    form_class = RegistrationForm
+    form_class = UserCreationForm
 
     def get(self, request, *args, **kwargs):
         context = {
@@ -140,7 +140,7 @@ class RegisterView(View):
         if form.is_valid():
             user = User.objects.create_user(
                 username=form.cleaned_data['username'],
-                password=form.cleaned_data['password']
+                password=form.cleaned_data['password1']
             )
 
             login(request, user)

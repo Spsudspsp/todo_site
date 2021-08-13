@@ -25,43 +25,18 @@ class TestForms(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_todo_form_invalid_data(self):
-        form = f.TodoForm(data={})
+        form = f.TodoForm(data={
 
-        self.assertFalse(form.is_valid())
-
-    def test_registration_form_valid_data(self):
-        form = f.RegistrationForm(data={
-            'username': 'asdasdasd',
-            'password': 'asdasdasd1'
-        })
-
-        self.assertTrue(form.is_valid())
-
-    def test_registration_form_invalid_data(self):
-        form = f.RegistrationForm(data={})
-
-        self.assertFalse(form.is_valid())
-
-    def test_registration_form_invalid_data_numeric_password(self):
-        form = f.RegistrationForm(data={
-            'username': 'asdasdasd',
-            'password': '11111111'
         })
 
         self.assertFalse(form.is_valid())
 
-    def test_registration_form_invalid_data_username_too_long(self):
-        form = f.RegistrationForm(data={
-            'username': 'asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd',
-            'password': 'asdasdasd1'
-        })
-
-        self.assertFalse(form.is_valid())
-
-    def test_registration_form_invalid_data_password_too_long(self):
-        form = f.RegistrationForm(data={
-            'username': 'asdasdasd',
-            'password': 'asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd1'
+    def test_todo_form_invalid_data_title_has_special_chars(self):
+        form = f.TodoForm(data={
+            'title': 'asd$##$',
+            'content': 'sdfsdfsdf',
+            'cpmpleted': False,
+            'user': self.user
         })
 
         self.assertFalse(form.is_valid())
